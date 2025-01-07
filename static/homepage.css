@@ -1,0 +1,130 @@
+*{
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+body{
+  background-color: #393939;
+}
+
+header{
+  background-color: #D1C764;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-evenly;
+  padding: 1.5rem;
+}
+
+.navegator{
+  margin-right: 3rem;
+  font-size: large;
+}  
+
+.start{
+  background-color: #636363;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 2rem;
+  margin: 1.5rem;
+}
+
+.exemple{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+}
+
+.original{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.resultado{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.text{
+  margin: 1rem;
+}
+
+#img{
+  border-radius: 10px;
+  height: 200px;
+  width: 250px;
+}
+
+.steps{
+  border-radius: 1rem;
+  margin: 1.5rem;
+  background-color: #D1C764;
+  padding: 0.5rem;
+}
+
+.step1{
+  display: flex;
+  flex-direction: row;
+  align-content: stretch;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+#step1{
+  width: 30rem;
+  height: 40rem;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  border-radius: 1rem;
+}
+
+#step2{
+  width: 45rem;
+  height: 40rem;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  border-radius: 1rem;
+}
+
+#step3{
+  margin: 1rem;
+  border-radius: 1rem;
+  width: 76rem;
+  height: 10rem;
+}
+
+.step3{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.plans{
+  background-color: #636363;
+  margin: 1.5rem;
+  border-radius: 10px;
+}
+
+.title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+}
+
+.options{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 1rem;
+}
