@@ -1,0 +1,62 @@
+main{
+  display: flex;
+  justify-content: center;
+}
+
+.login{
+  background-color: #434343;
+  margin-top: 4rem;
+  border-radius: 1rem;
+  width: 30rem;
+}
+
+.begin{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 1rem;
+}
+
+.email{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  margin-bottom: 1rem;
+}
+
+.password{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  margin-bottom: 1rem;
+}
+
+.log{
+  border-radius: 2rem;
+}
+
+.submit{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row;
+}
+
+.others{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.log-options{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 2rem;
+}
