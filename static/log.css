@@ -1,0 +1,63 @@
+body{
+  background-color: #393939;
+}
+
+.filters{
+  background-color: #404040;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  padding: 1.5rem;
+  margin: 2rem;
+}
+
+.data-history{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.filters-options{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.select{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem;
+}
+
+.process-results{
+  display: flex;
+  flex-direction: column;
+  width: 97%;
+  padding: 1rem;
+  border-radius: 10px;
+  border-color: #0b9e0b;
+  border-style: solid;
+  border-width: 5px;
+}
+
+.info-process{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.data{
+  width: 20%;
+  margin-left: 1rem;
+}
+
+.report{
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
