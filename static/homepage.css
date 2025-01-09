@@ -13,17 +13,54 @@ header{
   display: flex;
   align-items: center;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
   padding: 1.5rem;
 }
 
 .navegator{
   margin-right: 3rem;
   font-size: large;
+  color: white;
+  transition: color 0.3s ease;
 }  
 
-.start{
-  background-color: #636363;
+.navegator:hover{
+  color: black;
+}
+
+.login{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 2rem;
+  border-color: white;
+  transition: border 0.6s ease;
+  border-width: 3px;
+  border-style: solid;
+  color: white;
+  transition: color 0.3s ease;
+  font-size: 1.3rem;
+}
+
+.login:hover{
+  color: black;
+  border-color: black;
+}
+
+#icon{
+  margin-right: 1rem;
+  font-size: 1.7rem;
+}
+
+.begin{
+  color: white;
+  background-color: #404040;
   border-radius: 10px;
   display: flex;
   flex-direction: row;
@@ -35,33 +72,101 @@ header{
 
 .exemple{
   display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: flex-start;
+  flex-direction: row;
+  width: 50%;
 }
 
 .original{
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
 }
 
 .resultado{
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
 }
 
-.text{
-  margin: 1rem;
+.text1{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  font-size: 2rem;
+  margin-top: 3rem;
+}
+
+.text2{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  margin-bottom: 3rem;
 }
 
 #img{
   border-radius: 10px;
   height: 200px;
   width: 250px;
+}
+
+.options{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  border-radius: 2rem;
+  background-color: #7a7979;
+  width: 15rem;
+  height: 15rem;
+}
+
+.start{
+  width: 10rem;
+  height: 3rem;
+  border-radius: 2rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #D1C764;
+  background-color: #D1C764;
+  color: black;
+  transition: border 0.7s ease;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.start:hover{
+  border-color: #D04C4C;
+  background-color: #D04C4C;
+  color: white;
+}
+
+.about{
+  width: 7rem;
+  height: 2.5rem;
+  border-radius: 2rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #D04C4C;
+  background-color: #D04C4C;
+  color: white;
+  transition: border 0.7s ease;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+}
+
+.about:hover{
+  border-color: #D1C764;
+  background-color: #D1C764;
+  color: black;
 }
 
 .steps{
@@ -110,6 +215,7 @@ header{
 }
 
 .plans{
+  color: white;
   background-color: #636363;
   margin: 1.5rem;
   border-radius: 10px;
@@ -122,9 +228,41 @@ header{
   margin: 1rem;
 }
 
-.options{
+.plan-options{
   display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.plan1{
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  margin: 1rem;
+  border-radius: 2rem;
+  padding: 1rem;
+  width: 20%;
+  background-color: #D1C463;
+  margin-bottom: 1rem;
+}
+
+.plan2{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2rem;
+  padding: 1rem;
+  width: 20%;
+  background-color: #CD4B4B;
+  margin-bottom: 1rem;
+}
+
+.plan3{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2rem;
+  padding: 1rem;
+  width: 20%;
+  background-color: #9150E0;
+  margin-bottom: 1rem;
 }

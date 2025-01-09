@@ -1,20 +1,30 @@
 main{
+  color: white;
   display: flex;
   justify-content: center;
 }
 
-.login{
+.reg{
+  color: gray;
+}
+
+.label_login{
+  color: white;
   background-color: #434343;
   margin-top: 4rem;
   border-radius: 1rem;
   width: 30rem;
 }
 
-.begin{
+.name{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 1rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 2rem;
+  color: white;
 }
 
 .email{
@@ -37,6 +47,8 @@ main{
 
 .log{
   border-radius: 2rem;
+  height: 2rem;
+  width: 100%;
 }
 
 .submit{
@@ -44,6 +56,27 @@ main{
   justify-content: space-evenly;
   align-items: center;
   flex-direction: row;
+  margin: 2rem;
+}
+
+.send{
+  font-size: 1rem;
+  width: 8rem;
+  height: 3rem;
+  border-radius: 1rem;
+  border-color: #D1C764;
+  background-color: #D1C764;
+  border-width: 5px;
+  color: black;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  border-style: solid;
+}
+
+.send:hover{
+  border-color: white;
+  background-color: white;
+  color: black
 }
 
 .others{
@@ -58,5 +91,15 @@ main{
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
+}
+
+.log_with{
+  color: gray;
+  font-size: 0.8rem;
+}
+
+#icon_boot{
+  font-size: 2rem;
+  margin: 1rem;
 }

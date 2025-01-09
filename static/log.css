@@ -11,6 +11,7 @@ body{
   justify-content: space-evenly;
   padding: 1.5rem;
   margin: 2rem;
+  color: white;
 }
 
 .data-history{
@@ -26,10 +27,45 @@ body{
 }
 
 .select{
+  font-size: 1.3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem;
+  margin-top: 1rem;
+  margin-right: 1rem;
+}
+
+.type{
+  width: 10rem;
+  height: 3rem;
+  border-radius: 2rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #D1C764;
+  background-color: #D1C764;
+  color: black;
+  transition: border 0.7s ease;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.check{
+  width: 4rem;
+  height: 2rem;
+  border-radius: 3rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #D1C764;
+  background-color: #D1C764;
+  color: black;
+  transition: border 0.7s ease;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+  margin-top: 0.65rem;
+  margin-bottom: 2rem;
 }
 
 .process-results{
@@ -50,9 +86,15 @@ body{
   justify-content: space-evenly;
 }
 
+#boot_icon{
+  font-size: 3rem;
+  color: #0b9e0b;
+}
+
 .data{
   width: 20%;
   margin-left: 1rem;
+  font-size: 1.2rem;
 }
 
 .report{
@@ -60,4 +102,36 @@ body{
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+}
+
+.open{
+  width: 8rem;
+  height: 2.5rem;
+  border-radius: 1rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #D1C764;
+  background-color: #D1C764;
+  color: black;
+  transition: border 0.7s ease;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.download{
+  width: 8rem;
+  height: 2.5rem;
+  border-radius: 1rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #B0433B;
+  background-color: #B0433B;
+  color: white;
+  transition: border 0.7s ease;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }

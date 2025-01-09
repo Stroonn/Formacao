@@ -1,13 +1,21 @@
+p{
+  margin-left: 0.5rem;
+}
+
 main{
   display: flex;
   justify-content: center;
 }
 
-.begin{
+.name{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin: 1rem;
+}
+
+#login{
+  color: gray;
 }
 
 .register{
@@ -15,6 +23,7 @@ main{
   margin-top: 4rem;
   border-radius: 1rem;
   width: 30rem;
+  color: white;
 }
 
 #register{
@@ -26,14 +35,75 @@ main{
   flex-direction: column;
   align-items: stretch;
   margin: 1rem;
+  font-size: 1.2rem;
 }
 
 .log{
   border-radius: 2rem;
+  height: 2rem;
+}
+
+.address{
+  font-size: 1.2rem;
+  display: flex;
+  flex-direction: row;
+  margin: 1rem;
+  justify-content: space-around;
+}
+
+.street{
+  border-radius: 2rem;
+  height: 2rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.number{
+  border-radius: 2rem;
+  height: 2rem;
+  width: 4rem;
+  margin-left: 0.5rem;
+  margin-right: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.city{
+  border-radius: 2rem;
+  height: 2rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+}
+
+.state{
+  border-radius: 2rem;
+  height: 2rem;
+  width: 98%;
+  margin-bottom: 1rem;
 }
 
 .submit{
   display: flex;
   justify-content: flex-end;
   margin: 1rem;
+}
+
+.send{
+  font-size: 1rem;
+  width: 8rem;
+  height: 3rem;
+  border-radius: 1rem;
+  border-color: #D1C764;
+  background-color: #D1C764;
+  border-width: 5px;
+  color: black;
+  transition: border 0.7s ease;
+  transition: color 0.3s ease;
+  border-style: solid;
+}
+
+.send:hover{
+  border-color: white;
+  background-color: white;
+  color: black
 }

@@ -7,14 +7,19 @@
   justify-content: space-evenly;
   padding: 2rem;
   margin: 1.5rem;
+  color: white;
 }
 
-.begin{
+.name{
   margin-bottom: 1rem;
   border-radius: 2rem;
   background-color: #404040;
   width: 100%;
-  padding: 0.5rem;
+}
+
+#step-name{
+  font-size: 2rem;
+  margin: 1rem;
 }
 
 .process{
@@ -25,7 +30,7 @@
   border-radius: 2rem;
   background-color: #404040;
   width: 100%;
-  padding: 1rem;
+  padding-top: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -36,8 +41,40 @@
 
 .process-options{
   display: flex;
-  justify-content: space-around;
+  align-items: center;
   margin-bottom: 1rem;
+  width: 100%;
+}
+
+.menu{
+  border-width: 3px;
+  border-style: solid;
+  border-color: white;
+  background-color: white;
+  color: black;
+  transition: border 0.7s ease;
+  transition: color 0.7s ease;
+  border-radius: 2rem;
+  font-size: 1rem;
+  width: 10rem;
+  height: 3rem;
+  margin-right: 1.5rem;
+}
+
+.menu:hover{
+  border-color: black;
+  background-color: black;
+  color: white;
+}
+
+.img_to_process{
+  width: 400px;
+  height: 300px;
+}
+
+.processed_img{
+  width: 500px;
+  height: 400px;
 }
 
 .submit{
@@ -46,12 +83,62 @@
   margin-top: 1rem;
 }
 
+.process_button{
+  border-width: 3px;
+  border-style: solid;
+  border-color: #CA4A49;
+  background-color: #CA4A49;
+  color: white;
+  transition: border 0.7s ease;
+  transition: color 0.7s ease;
+  border-radius: 2rem;
+  font-size: 1.3rem;
+  width: 10rem;
+  height: 3rem;
+}
+
+.process_button:hover{
+  border-color: black;
+  background-color: black;
+  color: white;
+}
+
 .info{
   display: flex;
   justify-content: space-evenly;
 }
 
+#errors{
+  color: #d31818;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.doc{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #CA4A49;
+  background-color: #CA4A49;
+  color: white;
+  transition: border 0.7s ease;
+  transition: color 0.7s ease;
+  border-radius: 2rem;
+  font-size: 1.3rem;
+  width: 11rem;
+  height: 3rem;
+}
+
+.doc:hover{
+  border-color: black;
+  background-color: black;
+  color: white;
+}
+
 .history{
+  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,6 +156,24 @@
 }
 
 .download{
-  margin: 1rem;
+  margin-bottom: 2rem;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #CA4A49;
+  background-color: #CA4A49;
+  color: white;
+  transition: border 0.7s ease;
+  transition: color 0.7s ease;
+  border-radius: 2rem;
+  font-size: 1rem;
+  margin-top: 2rem;
+  width: 10rem;
+  height: 3rem;
+}
+
+.download:hover{
+  background-color: black;
+  border-color: black;
+  color: white;
 }
 
