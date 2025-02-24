@@ -16,10 +16,10 @@
       <img src="" id="logo">
     </div>
     <nav class="navebar">
-      <a class="navegator" href="/template/homepage.html">Home</a>
-      <a class="navegator" href="/template/image_process.html">Processo</a>
-      <a class="navegator" href="/template/log.html">Histórico</a>
-      <a class="navegator" href="/template/plans.html">Planos</a>
+      <a class="navegator" href="{{ url_for('homepage') }}">Home</a>
+      <a class="navegator" href="{{ url_for('processimage') }}">Processo</a>
+      <a class="navegator" href="{{ url_for('log') }}">Histórico</a>
+      <a class="navegator" href="{{ url_for('planos') }}">Planos</a>
     </nav>
     <div class="login">
       <i class="bi bi-person-circle" id="icon"></i>

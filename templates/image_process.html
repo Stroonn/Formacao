@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Rotulo checker
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/homepage.css">
+<link rel="stylesheet" href="/static/image_process.css">
+{% endblock %}
+
+{% block content %}
+<div class="text-info">
+  <div class="name">
+    <p id="step-name">Processe sua imagem</p>
+  </div>
+  <div class="process">
+    <div class="select_process">
+      <div class="process-options">
+        <button class="menu">Enviar imagem</button>
+        <button class="menu">Tipo de produto</button>
+      </div>
+      <div class="image_to_process">
+        <img src="/imagens/teste.jpeg" class="img_to_process">
+      </div>
+      <div class="submit">
+        <button class="process_button">Processar</button>
+      </div>
+    </div>
+    <div class="select_process">
+      <div class="info_results">
+        <img src="/imagens/teste.jpeg" class="processed_img">
+      </div>
+      <div class="info">
+        <p id="errors">3 erros</p>
+        <button class="doc">Gerar relatório</button>
+      </div>
+    </div>
+  </div>
+  <div class="history">
+    <div class="results">
+      <p>info 1</p>
+    </div>
+    <div class="results">
+      <p>info 2</p>
+    </div>
+    <div class="results">
+      <p>info 3</p>
+    </div>
+    <button class="download">Baixar pdf</button>
+  </div>
+</div>
+{% endblock %}

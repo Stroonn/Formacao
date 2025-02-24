@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Histórico{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='log.css') }}">
+<link rel="stylesheet" href="/static/homepage.css">
+{% endblock %}
+
+{% block content %}
+<div class="filters">
+  <div class="data-history">
+    <h1>Filtros</h1>
+    <div class="filters-options">
+      <div class="select">
+        <p>Data</p>
+        <button class="type">Todos</button>
+      </div>
+      <div class="select">
+        <p>Produto</p>
+        <button class="type">Todos</button>
+      </div>
+      <div class="select">
+        <p>Corretos</p>
+        <input type="checkbox" class="check">
+      </div>
+      <div class="select">
+        <p>Errados</p>
+        <input type="checkbox" class="check">
+      </div>
+    </div>
+  </div>
+  <div class="process-results">
+    <div class="info-process">
+      <i class="bi bi-check2" id="boot_icon"></i>
+      <div class="img-analyzed">
+        <img src="/imagens/teste.jpeg">
+      </div>
+      <div class="data">
+        <p>Data: 11/02/2024</p>
+        <p>Produto: Alimento</p>
+        <p>Erros: 0</p>
+      </div>
+      <div class="report">
+        <button class="open">Abrir relatório</button>
+        <button class="download">Baixar relatório</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

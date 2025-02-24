@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Planos
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='plans.css') }}">
+<link rel="stylesheet" href="/static/homepage.css">
+{% endblock %}
+
+{% block content %}
+<div class="offer">
+  <div class="name">
+    <h1>Planos</h1>
+  </div>
+  <div class="offer-plans">
+    <div class="bronze">
+      <p>Bronze</p>
+      <button class="contract">Assinar plano</button>
+    </div>
+    <div class="silver">
+      <p>Prata</p>
+      <button class="contract">Assinar plano</button>
+    </div>
+    <div class="gold">
+      <p>Ouro</p>
+      <button class="contract">Assinar plano</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

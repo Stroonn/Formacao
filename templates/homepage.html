@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Rotulo Checker{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="begin">
+        <div class="exemple">
+            <div class="original">
+                <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+                <div class="text1">
+                    <p>E crie</p>
+                    <p>embalagens</p>
+                    <p style="color: #9150E0">formatadas</p>
+                    <p>corretamente</p>
+                </div>
+            </div>
+            <div class="resultado">
+                <div class="text2">
+                    <p>Aumente sua</p>
+                    <p style="color: #9150E0;">produtividade</p>
+                    <p>e agilidade</p>
+                </div>
+                <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+            </div>
+        </div>
+        <div class="options">
+            <button class="start">Comece Aqui</button>
+            <button class="about">Veja Sobre</button>
+        </div>
+    </div>
+
+    <div class="steps">
+        <div class="step1">
+            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="step1">
+            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="step2">
+        </div>
+        <div class="step2">
+            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="step3">
+        </div>
+        <div class="step3">
+            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+            <i class="bi bi-chevron-double-right" style="font-size: 2rem;"></i>
+            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+            <i class="bi bi-chevron-double-right" style="font-size: 2rem;"></i>
+            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+        </div>
+    </div>
+
+    <div class="plans">
+        <div class="title">
+            <h1>Planos</h1>
+        </div>
+        <div class="plan-options">
+            <div class="plan1"><h4>Bronze</h4></div>
+            <div class="plan2"><h4>Prata</h4></div>
+            <div class="plan3"><h4>Ouro</h4></div>
+        </div>
+    </div>
+{% endblock %}

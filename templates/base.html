@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meu Site{% endblock %}</title>
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Bloco para CSS específico de cada página -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- Bootstrap Icons (Opcional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <div class="topo">
+            <img src="{{ url_for('static', filename='logo.png') }}" id="logo">
+        </div>
+        <nav class="navebar">
+            <a class="navegator" href="">Home</a>
+            <a class="navegator" href="">Processo</a>
+            <a class="navegator" href="">Histórico</a>
+            <a class="navegator" href="">Planos</a>
+            <a class="navegator" href="{{ url_for('login') }}">Login</a>
+        </nav>
+        <div class="login">
+            {% if 'user' in session %}
+                <!-- Usuário logado: Mostrar ícone de perfil com dropdown -->
+                <div class="profile-dropdown">
+                    <button class="profile-button">
+                        <i class="bi bi-person-circle" id="icon"></i>
+                        <p>Perfil</p>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('profile') }}">Meu Perfil</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Usuário não logado: Mostrar ícone de login -->
+                <a href="{{ url_for('login') }}">
+                    <i class="bi bi-person-circle" id="icon"></i>
+                    <p>Login</p>
+                </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Meu Site</p>
+    </footer>
+
+    <!-- JavaScript para o dropdown -->
+    <script>
+        // Adicionar funcionalidade ao dropdown
+        const profileButton = document.querySelector('.profile-button');
+        const dropdownContent = document.querySelector('.dropdown-content');
+
+        profileButton.addEventListener('click', () => {
+            dropdownContent.classList.toggle('show');
+        });
+
+        // Fechar o dropdown ao clicar fora
+        window.addEventListener('click', (event) => {
+            if (!event.target.matches('.profile-button')) {
+                if (dropdownContent.classList.contains('show')) {
+                    dropdownContent.classList.remove('show');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
