@@ -20,14 +20,13 @@
             <img src="{{ url_for('static', filename='logo.png') }}" id="logo">
         </div>
         <nav class="navebar">
-            <a class="navegator" href="">Home</a>
-            <a class="navegator" href="">Processo</a>
-            <a class="navegator" href="">Histórico</a>
-            <a class="navegator" href="">Planos</a>
-            <a class="navegator" href="{{ url_for('login') }}">Login</a>
+            <a class="navegator" href="{{url_for('homepage')}}">Home</a>
+            <a class="navegator" href="{{url_for('processo')}}">Processo</a>
+            <a class="navegator" href="{{url_for('log')}}">Histórico</a>
+            <a class="navegator" href="{{url_for('planos')}}">Planos</a>
         </nav>
         <div class="login">
-            {% if 'user' in session %}
+            {% if session.get("is_logged_in") %}
                 <!-- Usuário logado: Mostrar ícone de perfil com dropdown -->
                 <div class="profile-dropdown">
                     <button class="profile-button">
@@ -35,7 +34,7 @@
                         <p>Perfil</p>
                     </button>
                     <div class="dropdown-content">
-                        <a href="{{ url_for('profile') }}">Meu Perfil</a>
+                        <a href="{{ url_for('homepage') }}">Meu Perfil</a>
                         <a href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>
@@ -76,5 +75,8 @@
             }
         });
     </script>
+
+    <!-- Bloco para JavaScript específico de cada página -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

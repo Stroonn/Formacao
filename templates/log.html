@@ -7,44 +7,77 @@
 {% endblock %}
 
 {% block content %}
-<div class="filters">
-  <div class="data-history">
-    <h1>Filtros</h1>
-    <div class="filters-options">
-      <div class="select">
-        <p>Data</p>
-        <button class="type">Todos</button>
-      </div>
-      <div class="select">
-        <p>Produto</p>
-        <button class="type">Todos</button>
-      </div>
-      <div class="select">
-        <p>Corretos</p>
-        <input type="checkbox" class="check">
-      </div>
-      <div class="select">
-        <p>Errados</p>
-        <input type="checkbox" class="check">
+  <div class="filters">
+    <div class="data-history">
+      <h1>Filtros</h1>
+      <div class="filters-options">
+        <div class="select">
+          <p>Data</p>
+          <button class="type" id="filter-data-btn">Todos</button>
+          <div class="dropdown" id="data-dropdown" style="display: none;">
+            <input type="date" id="filter-data">
+          </div>
+        </div>
+        <div class="select">
+          <p>Produto</p>
+          <button class="type" id="filter-produto-btn">Todos</button> <!-- Botão para abrir o dropdown -->
+          <div class="dropdown" id="produto-dropdown" style="display: none;"> <!-- Dropdown de produtos -->
+            <button class="produto-option">Todos</button>
+            {% set tipos_servicos = servicos | map(attribute='tipo_servico.tipo') | unique %}
+            {% for tipo in tipos_servicos %}
+                <button class="produto-option">{{ tipo }}</button>
+            {% endfor %}
+          </div>
+        
+        </div>
+        <div class="select">
+          <p>Corretos</p>
+          <input type="checkbox" class="check" id="filter-corretos">
+        </div>
+        <div class="select">
+          <p>Errados</p>
+          <input type="checkbox" class="check" id="filter-errados">
+        </div>
       </div>
     </div>
   </div>
+
+
   <div class="process-results">
-    <div class="info-process">
-      <i class="bi bi-check2" id="boot_icon"></i>
-      <div class="img-analyzed">
-        <img src="/imagens/teste.jpeg">
-      </div>
-      <div class="data">
-        <p>Data: 11/02/2024</p>
-        <p>Produto: Alimento</p>
-        <p>Erros: 0</p>
-      </div>
-      <div class="report">
-        <button class="open">Abrir relatório</button>
-        <button class="download">Baixar relatório</button>
-      </div>
+    {% for servico in servicos %}
+  <div class="info-process" 
+      data-data="{{ servico.data_processamento }}" 
+      data-produto="{{ servico.tipo_servico.tipo }}"
+      data-erros="{{ servico.erros }}"
+      style="border-color:{% if servico.erros == 0 %}#0b9e0b{% else %}red{% endif %};">
+      
+    <i 
+      class="bi {% if servico.erros == 0 %}bi-check2{% else %}bi-x-circle{% endif %}" 
+      style="color: {% if servico.erros == 0 %}#0b9e0b{% else %}red{% endif %};" 
+      id="boot_icon">
+    </i>
+    <div class="img-analyzed">
+      <img src="{{ servico['img_entrada'] if servico['img_entrada'] else '/static/imagens/default.jpg' }}" alt="Imagem de entrada">
     </div>
+    <div class="data">
+      <p>Data: {{ servico['data_processamento'] }}</p>
+      <p>Produto: {{ servico['tipo_servico']['tipo'] }}</p>
+      <p>Erros: {{ servico['erros'] }}</p>
+    </div>
+    <div class="report">
+      {% if servico.relatorio %}
+        <a href="{{ servico['relatorio'] }}" target="_blank"><button class="open">Abrir relatório</button></a>
+        <a href="{{ servico['relatorio'] }}" download><button class="download">Baixar relatório</button></a>
+      {% else %}
+        <button class="open" disabled>Relatório Indisponível</button>
+      {% endif %}
+    </div>
+  </div>
+{% endfor %}
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/log.js') }}"></script>
 {% endblock %}

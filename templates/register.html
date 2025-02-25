@@ -1,79 +1,232 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .register-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        .register-container h2 {
-            margin-bottom: 20px;
-        }
-        .register-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .register-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .register-container button:hover {
-            background-color: #218838;
-        }
-        .register-container a {
-            display: block;
-            margin-top: 10px;
-            color: #007bff;
-            text-decoration: none;
-        }
-        .register-container a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="register-container">
-        <h2>Registro</h2>
-        <form action="/register" method="POST">
-            <input type="text" name="nome" placeholder="Nome" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Senha" required>
-            <input type="text" name="telefone" placeholder="Telefone" required>
-            <input type="text" name="cep" placeholder="CEP" required>
-            <input type="text" name="nroCasa" placeholder="Número da Casa" required>
-            <input type="text" name="complemento" placeholder="Complemento">
-            <input type="text" name="cidade" placeholder="Cidade" required>
-            <input type="text" name="uf" placeholder="UF" required>
-            <input type="text" name="bairro" placeholder="Bairro" required>
-            <input type="text" name="logradouro" placeholder="Logradouro" required>
-            <input type="text" name="siglaLogradouro" placeholder="Sigla do Logradouro" required>
-            <button type="submit">Registrar</button>
+{% extends "base.html" %}
+
+{% block title %}Registro - Rótulo Checker{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="register">
+        <div class="name">
+            <h2>Register</h2>
+            <a href="{{ url_for('login') }}" id="login">Login</a>
+        </div>
+        <form action="{{ url_for('register') }}" method="POST">
+            <div class="info">
+                <p>Nome</p>
+                <input type="text" name="first_name" class="log" required>
+            </div>
+            <div class="info">
+                <p>Sobrenome</p>
+                <input type="text" name="last_name" class="log" required>
+            </div>
+            <div class="info">
+                <p>CPF/CNPJ</p>
+                <input type="text" name="cpf_cnpj" class="log" required>
+            </div>
+            <div class="info">
+                <p>Telefone</p>
+                <input type="tel" name="phone" class="log" required>
+            </div>
+            <div class="info">
+                <p>CEP</p>
+                <input type="text" name="cep" class="log" required>
+            </div>
+            <div class="address">
+                <div class="street">
+                    <p>Rua</p>
+                    <input type="text" name="street" class="street" required>
+                </div>
+                <div class="number">
+                    <p>Número</p>
+                    <input type="number" name="number" class="number" required>
+                </div>
+            </div>
+            <div class="address">
+                <div class="city">
+                    <p>Cidade</p>
+                    <input type="text" name="city" class="city" required>
+                </div>
+                <div class="state">
+                    <p>Estado</p>
+                    <input type="text" name="state" class="state" required>
+                </div>
+            </div>
+            <div class="info">
+                <p>Bairro</p>
+                <input type="text" name="bairro" class="log" required>
+            </div>
+            <div class="info">
+                <p>Email</p>
+                <input type="email" name="email" class="log" required>
+            </div>
+            <div class="info">
+                <p>Senha</p>
+                <input type="password" name="password" class="log" required>
+            </div>
+            <div class="info">
+                <p>Confirmar Senha</p>
+                <input type="password" name="confirm_password" class="log" required>
+            </div>
+            <div class="submit">
+                <button type="submit" class="send">Enviar</button>
+            </div>
         </form>
-        <a href="/login">Já tem uma conta? Faça login</a>
     </div>
-</body>
-</html>
+</main>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+
+        const form = document.querySelector('form'); // Seleciona o formulário
+
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                let formValido = true;
+    
+                // Validação do CEP
+                const cepInput = document.querySelector('input[name="cep"]');
+                if (cepInput) {
+                    const cep = cepInput.value.replace(/\D/g, '');
+                    if (cep.length !== 8) {
+                        alert('CEP inválido. O CEP deve ter 8 dígitos.');
+                        formValido = false;
+                    }
+                }
+    
+                // Validação do CPF/CNPJ
+                const cpfCnpjInput = document.querySelector('input[name="cpf_cnpj"]');
+                if (cpfCnpjInput) {
+                    const valor = cpfCnpjInput.value.replace(/\D/g, '');
+                    if (valor.length === 11) {
+                        if (!validarCPF(valor)) {
+                            alert('CPF inválido.');
+                            formValido = false;
+                        }
+                    } else if (valor.length === 14) {
+                        if (!validarCNPJ(valor)) {
+                            alert('CNPJ inválido.');
+                            formValido = false;
+                        }
+                    } else {
+                        alert('CPF/CNPJ inválido. O CPF deve ter 11 dígitos e o CNPJ deve ter 14 dígitos.');
+                        formValido = false;
+                    }
+                }
+    
+                // Impede o envio do formulário se houver erros
+                if (!formValido) {
+                    event.preventDefault(); // Cancela o envio do formulário
+                }
+            });
+
+        }
+        const cepInput = document.querySelector('input[name="cep"]');
+        if (cepInput) {
+            cepInput.addEventListener('blur', function() {
+                const cep = cepInput.value;
+                if (cep.length === 8) {
+                    fetch(`https://viacep.com.br/ws/85862630/json/`)  // Requisição à rota do Flask
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.erro) {
+                                document.querySelector('input[name="street"]').value = data.logradouro || '';
+                                document.querySelector('input[name="bairro"]').value = data.bairro || '';
+                                document.querySelector('input[name="city"]').value = data.localidade || '';
+                                document.querySelector('input[name="state"]').value = data.uf || '';
+                            } else {
+                                alert('CEP não encontrado.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erro ao buscar CEP:', error);
+                            alert('Erro ao buscar CEP. Tente novamente.');
+                        });
+                } else {
+                    alert('CEP inválido. O CEP deve ter 8 dígitos.');
+                    document.querySelector('input[name="cep"]').value
+                }
+            });
+        }
+
+
+        const cpfCnpjInput = document.querySelector('input[name="cpf_cnpj"]');
+        if (cpfCnpjInput) {
+            cpfCnpjInput.addEventListener('blur', function() {
+                const valor = cpfCnpjInput.value.replace(/\D/g, '');
+                if (valor.length === 11) {
+                    if (!validarCPF(valor)) {
+                        alert('CPF inválido.');
+                    }
+                } else if (valor.length === 14) {
+                    if (!validarCNPJ(valor)) {
+                        alert('CNPJ inválido.');
+                    }
+                } else {
+                    alert('CPF/CNPJ inválido. O CPF deve ter 11 dígitos e o CNPJ deve ter 14 dígitos.');
+
+                }
+            });
+        }
+
+        // Função para validar CPF
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.charAt(9))) return false;
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.charAt(10))) return false;
+            return true;
+        }
+
+        // Função para validar CNPJ
+        function validarCNPJ(cnpj) {
+            cnpj = cnpj.replace(/\D/g, '');
+            if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+            let tamanho = cnpj.length - 2;
+            let numeros = cnpj.substring(0, tamanho);
+            let digitos = cnpj.substring(tamanho);
+            let soma = 0;
+            let pos = tamanho - 7;
+            for (let i = tamanho; i >= 1; i--) {
+                soma += numeros.charAt(tamanho - i) * pos--;
+                if (pos < 2) pos = 9;
+            }
+            let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+            if (resultado !== parseInt(digitos.charAt(0))) return false;
+            tamanho = tamanho + 1;
+            numeros = cnpj.substring(0, tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+            for (let i = tamanho; i >= 1; i--) {
+                soma += numeros.charAt(tamanho - i) * pos--;
+                if (pos < 2) pos = 9;
+            }
+            resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+            if (resultado !== parseInt(digitos.charAt(1))) return false;
+            return true;
+        }
+    });
+</script>
+{% endblock %}

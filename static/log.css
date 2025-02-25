@@ -1,5 +1,6 @@
 body{
   background-color: #393939;
+  box-sizing: border-box;
 }
 
 .filters{
@@ -73,10 +74,6 @@ body{
   flex-direction: column;
   width: 97%;
   padding: 1rem;
-  border-radius: 10px;
-  border-color: #0b9e0b;
-  border-style: solid;
-  border-width: 5px;
 }
 
 .info-process{
@@ -84,11 +81,16 @@ body{
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+  color: white;
+  margin-bottom: 1rem;
+  padding: 30px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
 }
 
 #boot_icon{
   font-size: 3rem;
-  color: #0b9e0b;
 }
 
 .data{
@@ -134,4 +136,81 @@ body{
   transition: color 0.3s ease;
   font-size: 1rem;
   margin-bottom: 1rem;
+}
+
+
+
+/* Estiliza o input de data */
+#filter-data {
+  width: 10rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 2px solid #D1C764;
+  border-radius: 5px;
+  background-color: #D1C764;
+  color: black;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Hover e foco no input de data */
+#filter-data:hover, #filter-data:focus {
+  background-color: white;
+  color: black;
+  outline: none;
+  border-color: white;
+}
+
+/* Estiliza os dropdowns */
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #505050;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 0;
+  min-width: 10rem;
+  z-index: 1000;
+}
+
+/* Estiliza as opções dentro do dropdown */
+.produto-option {
+  display: block;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  color: white;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+/* Efeito hover nos itens do dropdown */
+.produto-option:hover {
+  background-color: #D1C764;
+  color: black;
+  border-radius: 5px;
+}
+
+/* Ajuste para os dropdowns ficarem alinhados corretamente */
+.select {
+  position: relative;
+}
+
+/* Adiciona efeito hover nos botões principais sem alterar a cor */
+.type:hover {
+  border-color: white;
+}
+
+/* Ajuste para os checkboxes */
+.check {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.check:hover {
+  transform: scale(1.1);
 }
