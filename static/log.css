@@ -139,6 +139,15 @@ body{
 }
 
 
+.img-analyzed img {
+  width: 300px;  /* Defina a largura fixa */
+  height: 200px; /* Defina a altura fixa */
+  object-fit: cover; /* Garante que a imagem se ajuste sem distorcer */
+  border-radius: 8px; /* Bordas arredondadas (opcional) */
+}
+
+
+
 
 /* Estiliza o input de data */
 #filter-data {
@@ -164,7 +173,7 @@ body{
 
 /* Estiliza os dropdowns */
 .dropdown {
-  display: none;
+  display: block;
   position: absolute;
   background-color: #505050;
   border-radius: 10px;

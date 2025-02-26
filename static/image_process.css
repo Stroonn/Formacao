@@ -46,6 +46,63 @@
   width: 100%;
 }
 
+
+
+/* Esconde o input file padrão */
+input[type="file"] {
+  display: none;
+}
+
+/* Estiliza o botão substituto */
+.file-label {
+  background-color: #D1C764;
+  color: #000000;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 2px solid #D1C764;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* Efeito hover */
+.file-label:hover {
+  background-color: #c4ba5b;
+}
+
+/* Estiliza o nome do arquivo selecionado */
+.file-name {
+  color: #000000;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+
+/* Estilização do dropdown */
+.dropdown {
+  background-color: #D1C764;
+  color: #000000;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid #D1C764;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Opções do dropdown */
+.produto-option {
+  background-color: #D1C764;
+  color: #000000;
+  font-weight: bold;
+}
+
+/* Efeito hover no dropdown */
+.dropdown:hover {
+  background-color: #c4ba5b;
+}
+
+
+
 .menu{
   border-width: 3px;
   border-style: solid;

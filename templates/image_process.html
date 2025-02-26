@@ -17,33 +17,42 @@ Rotulo checker
   <div class="process">
     <div class="select_process">
       <div class="process-options">
-        <form action="{{ url_for('processo') }}" method="POST"  enctype="multipart/form-data">
-          <input type="file" name="image" accept="image/*" class="">
-          <select name="tipo_servico" class="">
-            {% for produto in produtos %}
-              <option value="{{ produto.id }}">{{ produto.tipo }}</option>
-            {% endfor %}
+        <form id="processForm" action="{{ url_for('processo') }}" method="POST" enctype="multipart/form-data">
+          <label for="file-upload" class="file-label">Selecionar arquivo</label>
+          <input id="file-upload" type="file" name="image" accept="image/*">
+      
+          <select name="tipo_servico" class="dropdown">
+              {% for produto in produtos %}
+                  <option class="produto-option" value="{{ produto.id }}" {% if produto.id == tipo_servico_id %}selected{% endif %}>
+                      {{ produto.tipo }}
+                  </option>
+              {% endfor %}
           </select>
-          <button type="submit" class="">Enviar</button>
-        </form>
+      </form>
+      
       </div>
       <div class="image_to_process">
-  <img src="{{ imagem_url if imagem_url else '/imagens/teste.jpeg' }}" class="img_to_process">
-</div>
+        <img src="{{ imagem_url if imagem_url else '/imagens/teste.jpeg' }}" class="img_to_process">
+      </div>
       <div class="submit">
-        <button class="process_button">Processar</button>
+        <button class="process_button">Enviar</button>
       </div>
     </div>
     <div class="select_process">
       <div class="info_results">
-        <img src="/imagens/teste.jpeg" class="processed_img">
+        <img src="{{ imagem_processed_url if imagem_processed_url else '/imagens/teste.jpeg' }}" class="processed_img">
       </div>
       <div class="info">
-        <p id="errors">3 erros</p>
+        {% if errors %}
+          <p id="errors">{{ errors }} erros</p>
+        {% endif %}
         <button class="doc">Gerar relatório</button>
       </div>
     </div>
   </div>
+
+  {% if imagem_processed_url %}
+
   <div class="history">
     <div class="results">
       <p>info 1</p>
@@ -56,23 +65,38 @@ Rotulo checker
     </div>
     <button class="download">Baixar pdf</button>
   </div>
-</div>
+
+  {% endif %}
+</div>  
 {% endblock %}
 
 {% block extra_js %}
 
 <script>
-  document.querySelector('input[name="image"]').addEventListener('change', function(event) {
-      const file = event.target.files[0]; // Obtém o arquivo selecionado
-      if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-              document.querySelector('.img_to_process').src = e.target.result; // Atualiza a imagem
-          };
-          reader.readAsDataURL(file); // Converte o arquivo para URL
-      }
+  document.addEventListener("DOMContentLoaded", function () {
+      document.querySelector(".submit").addEventListener("click", function () {
+          document.getElementById("processForm").submit();
+      });
+
+      document.querySelector('input[name="image"]').addEventListener('change', function(event) {
+          const file = event.target.files[0]; // Obtém o arquivo selecionado
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  document.querySelector('.img_to_process').src = e.target.result; // Atualiza a imagem
+                    document.querySelector('.processed_img').src = '';
+                    document.querySelector('#errors').innerText = '';
+                    document.querySelector('.doc').style.display = 'none';
+              };
+              reader.readAsDataURL(file); // Converte o arquivo para URL
+          }
+      });
   });
-  </script>
+</script>
+
+
+
+
 
 
 

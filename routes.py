@@ -1,15 +1,27 @@
 import firebase_admin
 import pyrebase
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 import bcrypt
 from firebase_admin import auth, credentials, firestore, storage
 from flask import Flask, render_template, redirect, request, session, url_for, jsonify, flash, g
 from functools import wraps
 import uuid
+from random import randint
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Carrega as variáveis do .env
 
 config = {
-
+    "apiKey": os.getenv("APIKEY"),
+    "authDomain": os.getenv("AUTHDOMAIN"),
+    "projectId": os.getenv("PROJECTID"),
+    "storageBucket": os.getenv("STORAGEBUCKET"),
+    "messagingSenderId": os.getenv("MESSAGINGSENDERID"),
+    "appId": os.getenv("APPID"),
+    "measurementId": os.getenv("MEASUREMENTID"),
+    "databaseURL": os.getenv("DATABASEURL")
 }
 
 firebase = pyrebase.initialize_app(config)
@@ -24,7 +36,7 @@ bucket = storage.bucket()
 
 # Inicializar o Flask
 app = Flask(__name__)
-app.secret_key = 'slakdjfslkfjahglkcdlkcnanahaeoighjakdfjdslkfjasd'
+app.secret_key = os.getenv("SECRET_KEY")
 
 def login_required(f):
     @wraps(f)
@@ -154,10 +166,11 @@ def register():
             assinatura_ref = cliente_ref.collection('assinaturas').document()
             assinatura_ref.set({
                 'data_fim': None,
-                'data_inicio': None,
+                'data_inicio': datetime.now(timezone.utc),
                 'plano_id': plano_ref.id,
                 'qtde_processamento': 10,
-                'ultimo_processamento': None
+                'ultimo_processamento': None,
+                'ativa': True
             })
 
             return redirect(url_for("homepage"))
@@ -175,7 +188,7 @@ def log():
     user_uid = session.get("uid")
     
     # Pegando todos os documentos da coleção "assinatura" do cliente
-    assinatura_docs = db.collection('Cliente').document("Cliente_1").collection('assinaturas').get()
+    assinatura_docs = db.collection('Cliente').document(user_uid).collection('assinaturas').get()
     servicos = []
 
     for assinatura_doc in assinatura_docs:
@@ -197,45 +210,57 @@ def planos():
 @app.route('/processo', methods=['GET', 'POST'])
 @login_required
 def processo():
-    if request.method == 'GET':
-        tipos = db.collection('tipo_servico').get()
-        produtos = [x.to_dict() | {"id": x.id} for x in tipos]  # Garantindo que 'id' esteja acessível no HTML
-        return render_template("image_process.html", produtos=produtos)
+    produtos = db.collection('tipo_servico').get()
+    produtos = [x.to_dict() | {"id": x.id} for x in produtos]  # Mantendo os produtos
 
-    elif request.method == 'POST':
-        
+    imagem_url = None
+    tipo_servico_id = None
+    errors = None
+
+    if request.method == 'POST':
         user_uid = session.get("uid")
-        # Pegando os dados do formulário
         tipo_servico_id = request.form.get("tipo_servico")
         imagem = request.files.get("image")
 
         if imagem:
-            # Gerando um nome único para a imagem
             filename = f"{uuid.uuid4()}_{imagem.filename}"
             blob = bucket.blob(f"entrada/{filename}")
-
-            # Enviando a imagem para o Firebase Storage
             blob.upload_from_file(imagem, content_type=imagem.content_type)
             blob.make_public()
-            img_url = blob.public_url  # URL pública da imagem
+            imagem_url = blob.public_url  # URL da imagem processada
 
             # Atualizando os dados do usuário
-            cliente_ref = db.collection('Cliente').document("Cliente_1")  # Usar o UID correto
-            assinatura_ref = cliente_ref.collection('assinaturas').document()
-
-            servico_ref = assinatura_ref.collection('servico').document()
+            cliente_ref = db.collection('Cliente').document(user_uid)
+              
+            assinatura_ref = cliente_ref.collection('assinaturas').get()
+            
+            assinatura_ativa = None
+            for assinatura in assinatura_ref:
+                if assinatura.to_dict()['ativa']:
+                    assinatura_ativa = assinatura
+                    break
+            
+            cliente_ref.collection('assinaturas').document(assinatura_ativa.id).update({
+                'qtde_processamento': firestore.Increment(-1),
+                'ultimo_processamento': datetime.now(timezone.utc)
+            })
+            
+            errors = randint(0, 4)
+            
+            
+            servico_ref = cliente_ref.collection('assinaturas').document(assinatura_ativa.id).collection('servico').document()
             servico_ref.set({
-                "data_processamento": datetime.utcnow().isoformat(),
-                "erros": 3,
-                "img_entrada": img_url,
-                "img_saida": "",
+                "data_processamento": datetime.now(timezone.utc),
+                "erros": errors,
+                "img_entrada": imagem_url,
+                "img_saida": imagem_url,
                 "relatorio": "",
                 "tipo_servico_id": tipo_servico_id
             })
 
-            return redirect(url_for('processo'))  # Recarrega a página
-
-    return redirect(url_for('processo'))
+        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url=imagem_url, tipo_servico_id=tipo_servico_id, errors=errors)
+    else:
+        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url=imagem_url, tipo_servico_id=tipo_servico_id, errors=errors)
     
 
 if __name__ == "__main__":

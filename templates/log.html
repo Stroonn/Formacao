@@ -49,7 +49,7 @@
       data-data="{{ servico.data_processamento }}" 
       data-produto="{{ servico.tipo_servico.tipo }}"
       data-erros="{{ servico.erros }}"
-      style="border-color:{% if servico.erros == 0 %}#0b9e0b{% else %}red{% endif %};">
+      style="border-color: {% if servico.erros == 0 %}#0b9e0b{% else %}red{% endif %};">
       
     <i 
       class="bi {% if servico.erros == 0 %}bi-check2{% else %}bi-x-circle{% endif %}" 
@@ -57,7 +57,7 @@
       id="boot_icon">
     </i>
     <div class="img-analyzed">
-      <img src="{{ servico['img_entrada'] if servico['img_entrada'] else '/static/imagens/default.jpg' }}" alt="Imagem de entrada">
+      <img src="{{ servico['img_saida'] if servico['img_saida'] else '/static/imagens/default.jpg' }}" alt="Imagem de entrada">
     </div>
     <div class="data">
       <p>Data: {{ servico['data_processamento'] }}</p>
