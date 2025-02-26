@@ -10,18 +10,19 @@ import uuid
 from random import randint
 import os
 from dotenv import load_dotenv
+from checker import process_image
 
 load_dotenv()  # Carrega as variáveis do .env
 
 config = {
-    "apiKey": os.getenv("API_KEY"),
-    "authDomain": os.getenv("AUTH_DOMAIN"),
-    "projectId": os.getenv("PROJECT_ID"),
-    "storageBucket": os.getenv("STORAGE_BUCKET"),
-    "messagingSenderId": os.getenv("MESSAGING_SENDER_ID"),
-    "appId": os.getenv("APP_ID"),
-    "measurementId": os.getenv("MEASUREMENT_ID"),
-    "databaseURL": os.getenv("DATABASE_URL")
+    "apiKey": "AIzaSyD3SQxbl_WPLHQXKEYJdjaNY4YDsByEjI4",
+  "authDomain": "rotulo-checker.firebaseapp.com",
+  "projectId": "rotulo-checker",
+  "storageBucket": "rotulo-checker.firebasestorage.app",
+  "messagingSenderId": "405041107880",
+  "appId": "1:405041107880:web:5d3827ff7ed8cd5608439d",
+  "measurementId": "G-M2E0T677KY",
+"databaseURL": "https://rotulo-checker-default-rtdb.firebaseio.com"
 }
 
 firebase = pyrebase.initialize_app(config)
@@ -215,7 +216,8 @@ def processo():
 
     imagem_url = None
     tipo_servico_id = None
-    errors = None
+    errors = 0
+    caminho_img_final = None
 
     if request.method == 'POST':
         user_uid = session.get("uid")
@@ -223,7 +225,7 @@ def processo():
         imagem = request.files.get("image")
 
         if imagem:
-            filename = f"{uuid.uuid4()}_{imagem.filename}"
+            filename = f"{imagem.filename}"
             blob = bucket.blob(f"entrada/{filename}")
             blob.upload_from_file(imagem, content_type=imagem.content_type)
             blob.make_public()
@@ -244,23 +246,34 @@ def processo():
                 'qtde_processamento': firestore.Increment(-1),
                 'ultimo_processamento': datetime.now(timezone.utc)
             })
+            img = imagem.filename
+            print(img)
+            caminho_img = process_image(img)
+            print(caminho_img)
+
+            filename = f"{uuid.uuid4()}_{imagem.filename}"
+            with open(caminho_img, "rb") as img_file:
+                blob = bucket.blob(f"saida/{filename}")
+                blob.upload_from_file(img_file, content_type=imagem.content_type)
+                blob.make_public()
+                caminho_img_final = blob.public_url  # URL da imagem processada
             
-            errors = randint(0, 4)
-            
-            
+            print(caminho_img_final)
+            print(imagem_url)
+
             servico_ref = cliente_ref.collection('assinaturas').document(assinatura_ativa.id).collection('servico').document()
             servico_ref.set({
                 "data_processamento": datetime.now(timezone.utc),
                 "erros": errors,
                 "img_entrada": imagem_url,
-                "img_saida": imagem_url,
+                "img_saida": caminho_img_final,
                 "relatorio": "",
                 "tipo_servico_id": tipo_servico_id
             })
 
-        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url=imagem_url, tipo_servico_id=tipo_servico_id, errors=errors)
+        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url=caminho_img_final, tipo_servico_id=tipo_servico_id, errors=errors)
     else:
-        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url=imagem_url, tipo_servico_id=tipo_servico_id, errors=errors)
+        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url='', tipo_servico_id=tipo_servico_id, errors=errors)
     
 
 if __name__ == "__main__":
