@@ -18,8 +18,6 @@ print(pt.pytesseract.image_to_string(img, lang='por'))
 
 def process_image(image_path):
     pt.pytesseract.tesseract_cmd = "C:/Program Files/Tesseract-OCR/tesseract.exe"
-
-    print(image_path, type(image_path))
     
     img = cv2.imread(image_path)
     imH, imW, _ = img.shape

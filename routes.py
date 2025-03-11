@@ -11,6 +11,10 @@ from random import randint
 import os
 from dotenv import load_dotenv
 from checker import process_image
+from openai import OpenAI
+import base64
+from io import BytesIO
+import json
 
 load_dotenv()  # Carrega as variáveis do .env
 
@@ -24,6 +28,9 @@ config = {
   "measurementId": "G-M2E0T677KY",
 "databaseURL": "https://rotulo-checker-default-rtdb.firebaseio.com"
 }
+
+client = OpenAI(
+)
 
 firebase = pyrebase.initialize_app(config)
 pyauth = firebase.auth()
@@ -212,12 +219,13 @@ def planos():
 @login_required
 def processo():
     produtos = db.collection('tipo_servico').get()
-    produtos = [x.to_dict() | {"id": x.id} for x in produtos]  # Mantendo os produtos
+    produtos = [x.to_dict() | {"id": x.id} for x in produtos]
 
     imagem_url = None
     tipo_servico_id = None
     errors = 0
     caminho_img_final = None
+    legislation_report = {}
 
     if request.method == 'POST':
         user_uid = session.get("uid")
@@ -225,55 +233,94 @@ def processo():
         imagem = request.files.get("image")
 
         if imagem:
+            # Ler os bytes da imagem e codificar para Base64
+            image_bytes = imagem.read()
+            encoded_for_openai = base64.b64encode(image_bytes).decode("utf-8")
+
+            # Prompt atualizado com separação por tópicos
+            prompt = (
+                "Analise a seguinte imagem de rótulo e verifique sua conformidade com a legislação brasileira.\n"
+                "Divida sua resposta nos seguintes tópicos: 'ingredientes', 'tabela_nutricional', 'informacoes_advertencias'.\n\n"
+                "Imagem em Base64: data:image/jpeg;base64," + encoded_for_openai + "\n\n"
+                "Retorne o resultado no formato JSON, seguindo esta estrutura:\n"
+                "{\n"
+                '    "ingredientes": { "status": "correto" ou "incorreto", "detalhes": "Explicação detalhada." },\n'
+                '    "tabela_nutricional": { "status": "correto" ou "incorreto", "detalhes": "Explicação detalhada." },\n'
+                '    "informacoes_advertencias": { "status": "correto" ou "incorreto", "detalhes": "Explicação detalhada." }\n'
+                "}"
+            )
+
+            # Chamada para OpenAI
+            analysis_response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+            )
+
+            response_text = analysis_response.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            # Tentar converter a resposta para JSON
+            try:
+                legislation_report = json.loads(response_text)
+                
+                print(legislation_report)
+
+                # Contabilizar erros: conta quantos tópicos possuem status "incorreto"
+                errors = sum(1 for item in legislation_report.values() if item.get("status") == "incorreto")
+
+            except json.JSONDecodeError:
+                legislation_report = {"error": "Erro ao converter a resposta da OpenAI para JSON"}
+                errors = -1  # Indica erro na conversão
+
+            # Resetar o ponteiro do arquivo e fazer upload da imagem original
+            imagem_stream = BytesIO(image_bytes)
             filename = f"{imagem.filename}"
             blob = bucket.blob(f"entrada/{filename}")
-            blob.upload_from_file(imagem, content_type=imagem.content_type)
+            blob.upload_from_file(imagem_stream, content_type=imagem.content_type)
             blob.make_public()
-            imagem_url = blob.public_url  # URL da imagem processada
+            imagem_url = blob.public_url  
 
             # Atualizando os dados do usuário
             cliente_ref = db.collection('Cliente').document(user_uid)
-              
             assinatura_ref = cliente_ref.collection('assinaturas').get()
-            
             assinatura_ativa = None
             for assinatura in assinatura_ref:
-                if assinatura.to_dict()['ativa']:
+                if assinatura.to_dict().get('ativa'):
                     assinatura_ativa = assinatura
                     break
-            
+
             cliente_ref.collection('assinaturas').document(assinatura_ativa.id).update({
                 'qtde_processamento': firestore.Increment(-1),
                 'ultimo_processamento': datetime.now(timezone.utc)
             })
+
             img = imagem.filename
-            print(img)
             caminho_img = process_image(img)
-            print(caminho_img)
 
             filename = f"{uuid.uuid4()}_{imagem.filename}"
             with open(caminho_img, "rb") as img_file:
                 blob = bucket.blob(f"saida/{filename}")
                 blob.upload_from_file(img_file, content_type=imagem.content_type)
                 blob.make_public()
-                caminho_img_final = blob.public_url  # URL da imagem processada
-            
-            print(caminho_img_final)
-            print(imagem_url)
-
+                caminho_img_final = blob.public_url  
+ 
+            # Salvando o relatório no Firestore
             servico_ref = cliente_ref.collection('assinaturas').document(assinatura_ativa.id).collection('servico').document()
             servico_ref.set({
                 "data_processamento": datetime.now(timezone.utc),
                 "erros": errors,
                 "img_entrada": imagem_url,
                 "img_saida": caminho_img_final,
-                "relatorio": "",
+                "relatorio": legislation_report,  
                 "tipo_servico_id": tipo_servico_id
             })
 
-        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url=caminho_img_final, tipo_servico_id=tipo_servico_id, errors=errors)
+        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, 
+                               imagem_processed_url=caminho_img_final, tipo_servico_id=tipo_servico_id, 
+                               errors=errors, legislation_report=legislation_report)
     else:
-        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, imagem_processed_url='', tipo_servico_id=tipo_servico_id, errors=errors)
+        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, 
+                               imagem_processed_url='', tipo_servico_id=tipo_servico_id, 
+                               errors=errors, legislation_report=legislation_report)
     
 
 if __name__ == "__main__":
