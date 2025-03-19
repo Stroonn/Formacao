@@ -19,7 +19,7 @@ def process_image(image_bytesio):
     _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
     cv2.imwrite('modelo\\thresh.jpg', thresh)
 
-    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (4, 4))
     dilation = cv2.dilate(thresh, rect_kernel, iterations=3)
     cv2.imwrite('modelo\\dilation_image.jpg', dilation)
 
@@ -29,7 +29,7 @@ def process_image(image_bytesio):
     for cnt in contours:
         i += 1
         x, y, w, h = cv2.boundingRect(cnt)
-        rect = cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        rect = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.imwrite('modelo\\rectanglebox.jpg', rect)
 
         cropped = gray[y:y + h, x:x + w]
@@ -37,5 +37,6 @@ def process_image(image_bytesio):
 
     cv2.imwrite('resultado.jpg', rect)
     caminho = 'resultado.jpg'
+    
     cv2.waitKey(0)
     return caminho
