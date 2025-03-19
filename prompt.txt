@@ -1,0 +1,9 @@
+dado o json, quero que analise a imagem e retorne outro json contendo cada ponto do json enviado no formato:
+
+item : {
+presente : sim ou não,
+correto : sim ou não,
+observação : texto breve
+},
+
+NÃO ADICIONE EXPLICAÇÕES. NÃO COLOQUE TEXTO FORA DO JSON.

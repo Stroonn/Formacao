@@ -46,7 +46,6 @@ Rotulo checker
         {% if errors %}
           <p id="errors">{{ errors }} erros</p>
         {% endif %}
-        <button class="doc">Gerar relatório</button>
       </div>
     </div>
   </div>
@@ -54,15 +53,14 @@ Rotulo checker
   {% if imagem_processed_url %}
 
   <div class="history">
+    {% for key, value in legislation_report.detalhes_erros.items() %}
     <div class="results">
-      <p>info 1</p>
+      <p><strong>{{ key }}</strong></p>
+      <p>Presente: {{ value.presente }}</p>
+      <p>Correto: {{ value.correto }}</p>
+      <p>Observação: {{ value.observação }}</p>
     </div>
-    <div class="results">
-      <p>info 2</p>
-    </div>
-    <div class="results">
-      <p>info 3</p>
-    </div>
+    {% endfor %}
     <button class="download">Baixar pdf</button>
   </div>
 

@@ -4,17 +4,20 @@ from datetime import datetime, timezone
 import re
 import bcrypt
 from firebase_admin import auth, credentials, firestore, storage
-from flask import Flask, render_template, redirect, request, session, url_for, jsonify, flash, g
+from flask import Flask, render_template, redirect, request, session, url_for, jsonify, flash, send_file
 from functools import wraps
 import uuid
 from random import randint
 import os
 from dotenv import load_dotenv
-from checker import process_image
 from openai import OpenAI
 import base64
 from io import BytesIO
 import json
+from label import analyze_label
+from image import process_image
+from fpdf import FPDF
+import io
 
 load_dotenv()  # Carrega as variáveis do .env
 
@@ -28,9 +31,6 @@ config = {
   "measurementId": "G-M2E0T677KY",
 "databaseURL": "https://rotulo-checker-default-rtdb.firebaseio.com"
 }
-
-client = OpenAI(
-)
 
 firebase = pyrebase.initialize_app(config)
 pyauth = firebase.auth()
@@ -202,11 +202,13 @@ def log():
     for assinatura_doc in assinatura_docs:
         servico_docs = assinatura_doc.reference.collection('servico').get()
         for servico in servico_docs:
-            servico = servico.to_dict()
-            servico["tipo_servico"] = db.collection('tipo_servico').document(servico['tipo_servico_id']).get().to_dict()
-            servico.pop('tipo_servico_id')
-            servico["data_processamento"] = servico["data_processamento"].strftime("%d/%m/%Y")
-            servicos.append(servico)
+            servico_data = servico.to_dict()
+            servico_data["id"] = str(servico.id)
+
+            servico_data["tipo_servico"] = db.collection('tipo_servico').document(servico_data['tipo_servico_id']).get().to_dict()
+            servico_data.pop('tipo_servico_id')
+            servico_data["data_processamento"] = servico_data["data_processamento"].strftime("%d/%m/%Y")
+            servicos.append(servico_data)
 
     return render_template("log.html", servicos=servicos)
 
@@ -223,9 +225,7 @@ def processo():
 
     imagem_url = None
     tipo_servico_id = None
-    errors = 0
     caminho_img_final = None
-    legislation_report = {}
 
     if request.method == 'POST':
         user_uid = session.get("uid")
@@ -235,51 +235,39 @@ def processo():
         if imagem:
             # Ler os bytes da imagem e codificar para Base64
             image_bytes = imagem.read()
-            encoded_for_openai = base64.b64encode(image_bytes).decode("utf-8")
-
-            # Prompt atualizado com separação por tópicos
-            prompt = (
-                "Analise a seguinte imagem de rótulo e verifique sua conformidade com a legislação brasileira.\n"
-                "Divida sua resposta nos seguintes tópicos: 'ingredientes', 'tabela_nutricional', 'informacoes_advertencias'.\n\n"
-                "Imagem em Base64: data:image/jpeg;base64," + encoded_for_openai + "\n\n"
-                "Retorne o resultado no formato JSON, seguindo esta estrutura:\n"
-                "{\n"
-                '    "ingredientes": { "status": "correto" ou "incorreto", "detalhes": "Explicação detalhada." },\n'
-                '    "tabela_nutricional": { "status": "correto" ou "incorreto", "detalhes": "Explicação detalhada." },\n'
-                '    "informacoes_advertencias": { "status": "correto" ou "incorreto", "detalhes": "Explicação detalhada." }\n'
-                "}"
-            )
-
-            # Chamada para OpenAI
-            analysis_response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-            )
-
-            response_text = analysis_response.get("choices", [{}])[0].get("message", {}).get("content", "")
-
-            # Tentar converter a resposta para JSON
-            try:
-                legislation_report = json.loads(response_text)
-                
-                print(legislation_report)
-
-                # Contabilizar erros: conta quantos tópicos possuem status "incorreto"
-                errors = sum(1 for item in legislation_report.values() if item.get("status") == "incorreto")
-
-            except json.JSONDecodeError:
-                legislation_report = {"error": "Erro ao converter a resposta da OpenAI para JSON"}
-                errors = -1  # Indica erro na conversão
 
             # Resetar o ponteiro do arquivo e fazer upload da imagem original
             imagem_stream = BytesIO(image_bytes)
-            filename = f"{imagem.filename}"
+            filename = f"{uuid.uuid4()}_{imagem.filename}"
             blob = bucket.blob(f"entrada/{filename}")
             blob.upload_from_file(imagem_stream, content_type=imagem.content_type)
             blob.make_public()
             imagem_url = blob.public_url  
 
-            # Atualizando os dados do usuário
+            # 🏷️ Analisar a imagem com a função analyze_label
+            
+            legislacao_ref = db.collection('legislacao').document(
+                db.collection('tipo_servico').document(tipo_servico_id).get().to_dict()["tipo"]
+            )
+            legislacao_doc = legislacao_ref.get()
+            legislacao_dict = legislacao_doc.to_dict()
+            
+            result = analyze_label(BytesIO(image_bytes), legislacao_dict)
+            
+            path_processed_image = process_image(BytesIO(image_bytes))
+            
+            # Ler os bytes da imagem processada e codificar para Base64
+            with open(path_processed_image, "rb") as processed_image_file:
+                processed_image_bytes = processed_image_file.read()
+            
+            imagem_stream = BytesIO(processed_image_bytes)
+            filename = f"{uuid.uuid4()}_{imagem.filename}"
+            blob = bucket.blob(f"saida/{filename}")
+            blob.upload_from_file(imagem_stream, content_type=imagem.content_type)
+            blob.make_public()
+            caminho_img_final = blob.public_url
+
+            # Atualizando os dados do usuário no Firestore
             cliente_ref = db.collection('Cliente').document(user_uid)
             assinatura_ref = cliente_ref.collection('assinaturas').get()
             assinatura_ativa = None
@@ -288,39 +276,96 @@ def processo():
                     assinatura_ativa = assinatura
                     break
 
-            cliente_ref.collection('assinaturas').document(assinatura_ativa.id).update({
-                'qtde_processamento': firestore.Increment(-1),
-                'ultimo_processamento': datetime.now(timezone.utc)
-            })
-
-            img = imagem.filename
-            caminho_img = process_image(img)
-
-            filename = f"{uuid.uuid4()}_{imagem.filename}"
-            with open(caminho_img, "rb") as img_file:
-                blob = bucket.blob(f"saida/{filename}")
-                blob.upload_from_file(img_file, content_type=imagem.content_type)
-                blob.make_public()
-                caminho_img_final = blob.public_url  
- 
-            # Salvando o relatório no Firestore
+            if assinatura_ativa:
+                cliente_ref.collection('assinaturas').document(assinatura_ativa.id).update({
+                    'qtde_processamento': firestore.Increment(-1),
+                    'ultimo_processamento': datetime.now(timezone.utc)
+                })
+        
+            # Salvando os resultados no Firestore
             servico_ref = cliente_ref.collection('assinaturas').document(assinatura_ativa.id).collection('servico').document()
             servico_ref.set({
                 "data_processamento": datetime.now(timezone.utc),
-                "erros": errors,
+                "erros": result["total_erros"],
                 "img_entrada": imagem_url,
                 "img_saida": caminho_img_final,
-                "relatorio": legislation_report,  
-                "tipo_servico_id": tipo_servico_id
+                "relatorio": result["detalhes_erros"],
+                "tipo_servico_id": tipo_servico_id,
+                "relatorio_completo": result["resultado_completo"]
             })
 
         return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, 
                                imagem_processed_url=caminho_img_final, tipo_servico_id=tipo_servico_id, 
-                               errors=errors, legislation_report=legislation_report)
+                               errors=result["total_erros"], legislation_report=result)
     else:
-        return render_template("image_process.html", produtos=produtos, imagem_url=imagem_url, 
+        return render_template("image_process.html", produtos=produtos, imagem_url=caminho_img_final, 
                                imagem_processed_url='', tipo_servico_id=tipo_servico_id, 
-                               errors=errors, legislation_report=legislation_report)
+                               errors=0, legislation_report={})
+        
+
+
+
+@app.route('/download-relatorio/<servico_id>')
+def download_relatorio(servico_id):
+    user_uid = session.get("uid")
+    cliente_ref = db.collection('Cliente').document(user_uid)
+    assinatura_ref = cliente_ref.collection('assinaturas').get()
+    assinatura_ativa = None
+    for assinatura in assinatura_ref:
+        if assinatura.to_dict().get('ativa'):
+            assinatura_ativa = assinatura
+            break
+
+    if assinatura_ativa:
+        cliente_ref.collection('assinaturas').document(assinatura_ativa.id).update({
+            'qtde_processamento': firestore.Increment(-1),
+            'ultimo_processamento': datetime.now(timezone.utc)
+        })
+    
+    
+    # Obtenha o serviço correspondente (simulação, ajuste conforme necessário)
+    servico = cliente_ref.collection('assinaturas').document(assinatura_ativa.id).collection('servico').document(servico_id).get().to_dict()
+    
+    if not servico or "relatorio_completo" not in servico:
+        return "Relatório não encontrado", 404
+    
+    relatorio = servico["relatorio_completo"]
+    
+    # Criar o PDF
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=8)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    pdf.cell(200, 10, "Relatório Completo", ln=True, align="C")
+    pdf.ln(10)
+
+    def add_dict_to_pdf(pdf, data, indent1=0, indent2=0):
+        for key, value in data.items():
+            if isinstance(value, dict):
+                pdf.set_font("Arial", style='B', size=10)
+                pdf.cell(0, 8, f"{' ' * indent1}{key}:", ln=True)
+                pdf.ln(1)
+                add_dict_to_pdf(pdf, value, indent1 + 10)
+            else:
+                pdf.set_font("Arial", size=10)
+                pdf.multi_cell(0, 8, f"{' ' * (indent1 + 1)}{key}: {value}")
+                pdf.ln(1)
+
+    add_dict_to_pdf(pdf, relatorio)
+
+    # Criar buffer de memória
+    pdf_output = io.BytesIO()
+    pdf_bytes = pdf.output(dest='S').encode('latin1')  # Gerar conteúdo do PDF como bytes
+    pdf_output.write(pdf_bytes)  # Escrever no buffer
+    pdf_output.seek(0)  # Voltar ao início para leitura
+
+    return send_file(
+        pdf_output,
+        download_name="relatorio_completo.pdf",
+        as_attachment=True,
+        mimetype="application/pdf"
+)
     
 
 if __name__ == "__main__":

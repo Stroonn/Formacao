@@ -10,7 +10,8 @@
     <div class="begin">
         <div class="exemple">
             <div class="original">
-                <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+                <img src="{{ url_for('static', filename='imagens/rotulo.png') }}" alt="Imagem padrão" style="width: 50%; height: auto;">
+
                 <div class="text1">
                     <p>E crie</p>
                     <p>embalagens</p>
@@ -24,29 +25,42 @@
                     <p style="color: #9150E0;">produtividade</p>
                     <p>e agilidade</p>
                 </div>
-                <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+                <img src="{{ url_for('static', filename='imagens/relatorioimg.png') }}" alt="Imagem padrão" style="width: 50%; height: auto;">
             </div>
         </div>
         <div class="options">
             <button class="start" onclick="location.href='{{ url_for('processo') }}'">Comece Aqui</button>
-            <button class="about">Veja Sobre</button>
+            <button class="about" onclick="document.querySelector('.info-section').scrollIntoView({ behavior: 'smooth' });">Veja Sobre</button>
         </div>
     </div>
 
+    
+
     <div class="steps">
-        <div class="step1">
-            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="step1">
-            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="step2">
+        <div class="info-section" style="display: flex; color: white; font-size: 1.5rem; width: 90%; margin: auto; text-align: justify;">
+            <div class="info-text" style="flex: 1; margin-right: 20px; padding: 30px; background-color: #2c2c2c; border-radius: 10px;">
+                <h3>Sobre o Rótulo Checker</h2>
+                <p>O Rótulo Checker é uma aplicação inovadora desenvolvida para empresas que desejam otimizar e agilizar o processo de criação de rótulos e embalagens no Brasil. Nossa ferramenta permite que você crie embalagens formatadas corretamente, aumentando sua produtividade e agilidade.</p>
+            </div>
+            <div class="info-text" style="flex: 1; margin-left: 20px; padding: 30px; background-color: #2c2c2c; border-radius: 10px;">
+                <h3>Como funciona</h2>
+                <p>Com o Rótulo Checker, você pode garantir que seus produtos estejam sempre em conformidade com as normas e regulamentações brasileiras, economizando tempo e recursos. Experimente agora e veja como podemos transformar o seu processo de criação de rótulos e embalagens!</p>
+            </div>
         </div>
         <div class="step2">
-            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="step3">
+           <div style="flex: 1; margin: 20px; padding: 20px; background-color: #2c2c2c; border-radius: 10px; color: white;">
+            <h2>Funcionamento básico do rótulo checker funciona em 3 passos</h1>
+            <p>1. Envie sua imagem</p>
+            <p>2. Processamos a imagem</p>
+            <p>3. Receba o resultado</p>
+           </div>
         </div>
         <div class="step3">
-            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+            <img src="{{ url_for('static', filename='imagens/padrao.png') }}" id="img">
             <i class="bi bi-chevron-double-right" style="font-size: 2rem;"></i>
-            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+            <img src="{{ url_for('static', filename='imagens/padrao-final.png') }}" id="img">
             <i class="bi bi-chevron-double-right" style="font-size: 2rem;"></i>
-            <img src="{{ url_for('static', filename='imagens/teste.jpeg') }}" id="img">
+            <img src="{{ url_for('static', filename='imagens/relatorio.png') }}" id="img">
         </div>
     </div>
 

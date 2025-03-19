@@ -75,4 +75,4 @@ def process_image(image_path):
     return caminho
 
 # Example usage:
-result_image = process_image(r'g_rotulos-para-alimentos-congelados.jpg')
+result_image = process_image(r'imagem_t1.jpg')

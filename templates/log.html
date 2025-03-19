@@ -4,6 +4,56 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='log.css') }}">
 <link rel="stylesheet" href="/static/homepage.css">
+
+<style>
+  /* Estilos do popup */
+  body.no-scroll {
+    overflow: hidden;
+  }
+
+  .popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .popup-content {
+    max-height: 50vh;
+    overflow-y: auto;
+    background: white;
+    padding: 20px;
+    width: 50%;
+    margin: 10% auto;
+    border-radius: 8px;
+    text-align: left;
+    position: relative;
+  }
+
+  .close-popup {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .error-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .error-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+</style>
+
+
 {% endblock %}
 
 {% block content %}
@@ -66,18 +116,87 @@
     </div>
     <div class="report">
       {% if servico.relatorio %}
-        <a href="{{ servico['relatorio'] }}" target="_blank"><button class="open">Abrir relatório</button></a>
-        <a href="{{ servico['relatorio'] }}" download><button class="download">Baixar relatório</button></a>
+        <button class="open-details" style="padding: 10px 15px; background-color: #D1C764; color: #000000; border: none; border-radius: 4px; cursor: pointer;" data-erros='{{ servico.relatorio | tojson | safe }}'>Ver erros</button>
       {% else %}
-        <button class="open" disabled>Relatório Indisponível</button>
+        <button class="open" style="padding: 1px 15px; background-color: #ccc; color: #313131; border: none; border-radius: 4px;" disabled>Não há errosl</button>
+      {% endif %}
+
+      {% if servico.relatorio_completo %}
+        <a href="{{ url_for('download_relatorio', servico_id=servico.id) }}" 
+          style="display: block; margin-top: 10px; text-align: center; background-color: #4CAF50; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none;">
+          📄 Baixar Relatório Completo
+        </a>
       {% endif %}
     </div>
   </div>
 {% endfor %}
   </div>
 </div>
+
+<div id="error-popup" class="popup">
+  <div class="popup-content">
+    <span class="close-popup">&times;</span>
+    <ul id="error-list" class="error-list"></ul>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/log.js') }}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const popup = document.getElementById("error-popup");
+    const closePopup = document.querySelector(".close-popup");
+    const errorList = document.getElementById("error-list");
+
+    document.querySelectorAll(".open-details").forEach(button => {
+      button.addEventListener("click", function() {
+        const erros = JSON.parse(this.getAttribute("data-erros"));
+        errorList.innerHTML = "";
+
+        for (const [chave, value] of Object.entries(erros)) {
+          const partes = chave.split(".");
+          const categoria = partes[0]; // "Simbolos" ou "Painel_Principal"
+          const tipo = partes[1]; // "Alimentos_Liquidos", "Alimentos_Solidos", etc.
+          const atributo = partes[2]; // "Gorduras_Saturadas", "Sodio", etc.
+
+          const listItem = document.createElement("li");
+            let listItemContent = `<strong>${categoria}`;
+            if (tipo) listItemContent += ` - ${tipo}`;
+            if (atributo) listItemContent += ` - ${atributo}`;
+            listItemContent += `:</strong>
+                      <br> 🔹 Presente: ${value.presente == "sim" ? '✅ Sim' : '❌ Não'}
+                      <br> 🔹 Correto: ${value.correto == "sim" ? '✅ Sim' : '❌ Não'}
+                      <br> 🔹 Observação: ${value.observação}`;
+            listItem.innerHTML = listItemContent;
+            errorList.appendChild(listItem);
+        }
+
+        popup.style.display = "block";
+        document.body.classList.add("no-scroll");
+      });
+    });
+
+    closePopup.addEventListener("click", function() {
+      popup.style.display = "none";
+      document.body.classList.remove("no-scroll");
+    });
+
+    window.addEventListener("click", function(event) {
+      if (event.target === popup) {
+        popup.style.display = "none";
+        document.body.classList.remove("no-scroll");
+      }
+    });
+
+    popup.addEventListener("scroll", function(event) {
+      event.stopPropagation();
+    });
+  });
+</script>
 {% endblock %}
+
+
+
+
